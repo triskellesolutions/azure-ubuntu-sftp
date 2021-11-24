@@ -3,7 +3,7 @@ sudo dpkg --configure -a
 sudo apt-get -y update
 
 # install sftp
-sudo apt-get -y install wget openssh-server net-tools ca-certificates curl apt-transport-https lsb-release gnupg
+sudo apt-get -y install wget openssh-server net-tools ca-certificates curl apt-transport-https lsb-release gnupg vim
 sudo apt-get update
 # install cockpit
 . /etc/os-release
