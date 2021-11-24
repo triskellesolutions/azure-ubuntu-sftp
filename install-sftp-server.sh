@@ -2,7 +2,7 @@
 dpkg --configure -a
 apt-get -y update
 
-# install Apache2
+# install
 apt-get -y install wget
 
 wget https://software.virtualmin.com/gpl/scripts/install.sh
