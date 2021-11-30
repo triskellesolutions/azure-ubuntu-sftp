@@ -1,4 +1,8 @@
 #!/bin/bash
+resourceGroupName=$1
+storageAccountName=$2
+
+
 sudo dpkg --configure -a
 sudo apt-get -y update
 
