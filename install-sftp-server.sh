@@ -1,6 +1,9 @@
 #!/bin/bash
 resourceGroupName=$1
 storageAccountName=$2
+serviceAccountId=$3
+serviceAccountPassword=$4
+serviceAccountTenant=$5
 
 
 sudo dpkg --configure -a
@@ -25,6 +28,7 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update   
 sudo apt-get -y install azure-cli
     
+az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
 
 # config mounts
 httpEndpoint=$(az storage account show \
