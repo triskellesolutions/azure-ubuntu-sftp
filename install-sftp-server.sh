@@ -76,10 +76,11 @@ fi
 # Change permissions on the credential file so only root can read or modify the password file.
 sudo chmod 600 $smbCredentialFile
 
-mntPath="/mount/$storageAccountName/$storageAccountFileShareName"
-sudo  mkdir -p $mntPath
 
-echo "$smbPath$storageAccountFileShareName $mntPath cifs nofail,credentials=$smbCredentialFile,serverino" |  sudo tee -a /etc/fstab > /dev/null
+sudo  mkdir -p $storageAccountMountPath
+storageAccountSmbPathFileShare="$smbPath$storageAccountFileShareName"
+echo "$storageAccountSmbPathFileShare $storageAccountMountPath cifs nofail,credentials=$smbCredentialFile,serverino" |  sudo tee -a /etc/fstab > /dev/null
 
-sudo mount $mntPath
+echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee -a /vmsetup/install.keys
 
+sudo mount $storageAccountSmbPathFileShare
