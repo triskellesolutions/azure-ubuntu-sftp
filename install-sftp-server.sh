@@ -14,6 +14,7 @@ echo "storageAccountFileShareName=$3"    | sudo tee -a /vmsetup/install.keys
 echo "serviceAccountId=$4"               | sudo tee -a /vmsetup/install.keys
 echo "serviceAccountPassword=$5"         | sudo tee -a /vmsetup/install.keys
 echo "serviceAccountTenant=$6"           | sudo tee -a /vmsetup/install.keys
+echo "storageAccountMountPath=/mount/$storageAccountName/$storageAccountFileShareName" | sudo tee -a /vmsetup/install.keys
 
 sudo dpkg --configure -a
 sudo apt-get -y update
