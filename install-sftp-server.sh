@@ -6,13 +6,14 @@ serviceAccountId=$4
 serviceAccountPassword=$5
 serviceAccountTenant=$6
 
-echo "resourceGroupName=$1"
-echo "storageAccountName=$2"
-echo "storageAccountFileShareName=$3"
-echo "serviceAccountId=$4"
-echo "serviceAccountPassword=$5"
-echo "serviceAccountTenant=$6"
+sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.keys
 
+echo "resourceGroupName=$1"              | sudo tee -a /vmsetup/install.keys
+echo "storageAccountName=$2"             | sudo tee -a /vmsetup/install.keys
+echo "storageAccountFileShareName=$3"    | sudo tee -a /vmsetup/install.keys
+echo "serviceAccountId=$4"               | sudo tee -a /vmsetup/install.keys
+echo "serviceAccountPassword=$5"         | sudo tee -a /vmsetup/install.keys
+echo "serviceAccountTenant=$6"           | sudo tee -a /vmsetup/install.keys
 
 sudo dpkg --configure -a
 sudo apt-get -y update
