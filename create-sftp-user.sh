@@ -29,6 +29,16 @@ function validateArg() {
     fi
 }
 
+. /vmsetup/install.keys
+
+
+if [ -z "$storageAccountMountPath" ]
+  then
+    echo "No argument supplied storageAccountMountPath:$storageAccountMountPath"
+    exit 1
+fi
+
+
 log "Parsing user data: \"$1\""
 IFS=':' read -ra args <<< "$1"
 
@@ -98,9 +108,12 @@ if [ -d "$userKeysQueuedDir" ]; then
 fi
 
 dirPath="/home/$user/downloads"
+mntPath="$storageAccountMountPath/$user/downloads"
 if [ ! -d "$dirPath" ]; then
     log "Creating directory: $dirPath"
+    mkdir -p "$storageAccountMountPath/$user/downloads"
     mkdir -p "$dirPath"
+    ln --symbolic $mntPath $dirPath
     chown -R "$uid:$uid" "$dirPath"
     chmod 700 "$dirPath"
 else
@@ -108,9 +121,12 @@ else
 fi
 
 dirPath="/home/$user/uploads"
+mntPath="$storageAccountMountPath/$user/uploads"
 if [ ! -d "$dirPath" ]; then
     log "Creating directory: $dirPath"
-    mkdir -p "$dirPath"
+    mkdir -p "$storageAccountMountPath/$user/uploads"
+    #mkdir -p "$dirPath"
+    ln --symbolic $mntPath $dirPath
     chown -R "$uid:$uid" "$dirPath"
     chmod 700 "$dirPath"
 else
