@@ -26,6 +26,7 @@ sudo apt-get update
 sudo apt-get -y install azure-cli
     
 
+# config mounts
 httpEndpoint=$(az storage account show \
     --resource-group $resourceGroupName \
     --name $storageAccountName \
