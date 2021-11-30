@@ -32,11 +32,16 @@ function validateArg() {
 . /vmsetup/install.keys
 
 
-if [ -z "$storageAccountMountPath" ]
-  then
+if [ -z "$storageAccountMountPath" ]; then
     echo "No argument supplied storageAccountMountPath:$storageAccountMountPath"
     exit 1
 fi
+
+if [ -z "$storageAccountSmbPathFileShare" ]; then
+    echo "No argument supplied storageAccountSmbPathFileShare:$storageAccountSmbPathFileShare"
+    exit 1
+fi
+
 
 
 log "Parsing user data: \"$1\""
@@ -113,7 +118,8 @@ if [ ! -d "$dirPath" ]; then
     log "Creating directory: $dirPath"
     mkdir -p "$storageAccountMountPath/$user/downloads"
     mkdir -p "$dirPath"
-    ln --symbolic $mntPath $dirPath
+    echo "$storageAccountSmbPathFileShare/$user/downloads /home/$user/downloads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$gid" |  sudo tee -a /etc/fstab > /dev/null
+    mount '/home/$user/downloads'
     chown -R "$uid:$uid" "$dirPath"
     chmod 700 "$dirPath"
 else
@@ -125,8 +131,9 @@ mntPath="$storageAccountMountPath/$user/uploads"
 if [ ! -d "$dirPath" ]; then
     log "Creating directory: $dirPath"
     mkdir -p "$storageAccountMountPath/$user/uploads"
-    #mkdir -p "$dirPath"
-    ln --symbolic $mntPath $dirPath
+    mkdir -p "$dirPath"
+    echo "$storageAccountSmbPathFileShare/$user/uploads /home/$user/uploads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$gid" |  sudo tee -a /etc/fstab > /dev/null
+    mount '/home/$user/uploads'
     chown -R "$uid:$uid" "$dirPath"
     chmod 700 "$dirPath"
 else
