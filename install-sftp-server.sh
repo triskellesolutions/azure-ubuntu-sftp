@@ -84,3 +84,5 @@ echo "$storageAccountSmbPathFileShare $storageAccountMountPath cifs nofail,crede
 echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee -a /vmsetup/install.keys
 
 sudo mount $storageAccountSmbPathFileShare
+
+sudo chmod 600 /vmsetup/install.keys
