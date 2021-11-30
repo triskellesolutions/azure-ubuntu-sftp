@@ -116,12 +116,14 @@ dirPath="/home/$user/downloads"
 mntPath="$storageAccountMountPath/$user/downloads"
 if [ ! -d "$dirPath" ]; then
     log "Creating directory: $dirPath"
-    mkdir -p "$storageAccountMountPath/$user/downloads"
-    mkdir -p "$dirPath"
-    echo "$storageAccountSmbPathFileShare/$user/downloads /home/$user/downloads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$gid" |  sudo tee -a /etc/fstab > /dev/null
-    mount '/home/$user/downloads'
-    chown -R "$uid:$uid" "$dirPath"
-    chmod 700 "$dirPath"
+    sudo mkdir -p "$storageAccountMountPath/$user/downloads"
+    sudo mkdir -p "$dirPath"
+    echo "$storageAccountSmbPathFileShare/$user/downloads /home/$user/downloads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$uid" |  sudo tee -a /etc/fstab > /dev/null
+    sudo mount "/home/$user/downloads"
+    sudo chown -R "$uid:$uid" "$storageAccountMountPath/$user/downloads"
+    sudo chmod 700 "$storageAccountMountPath/$user/downloads"
+    sudo chown -R "$uid:$uid" "$dirPath"
+    sudo chmod 700 "$dirPath"
 else
     log "Directory already exists: $dirPath"
 fi
@@ -130,12 +132,12 @@ dirPath="/home/$user/uploads"
 mntPath="$storageAccountMountPath/$user/uploads"
 if [ ! -d "$dirPath" ]; then
     log "Creating directory: $dirPath"
-    mkdir -p "$storageAccountMountPath/$user/uploads"
-    mkdir -p "$dirPath"
-    echo "$storageAccountSmbPathFileShare/$user/uploads /home/$user/uploads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$gid" |  sudo tee -a /etc/fstab > /dev/null
-    mount '/home/$user/uploads'
-    chown -R "$uid:$uid" "$dirPath"
-    chmod 700 "$dirPath"
+    sudo mkdir -p "$storageAccountMountPath/$user/uploads"
+    sudo mkdir -p "$dirPath"
+    echo "$storageAccountSmbPathFileShare/$user/uploads /home/$user/uploads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$uid" |  sudo tee -a /etc/fstab > /dev/null
+    sudo mount "/home/$user/uploads"
+    sudo chown -R "$uid:$uid" "$dirPath"
+    sudo chmod 700 "$dirPath"
 else
     log "Directory already exists: $dirPath"
 fi
