@@ -82,3 +82,4 @@ sudo  mkdir -p $mntPath
 echo "$smbPath$storageAccountFileShareName $mntPath cifs nofail,credentials=$smbCredentialFile,serverino" |  sudo tee -a /etc/fstab > /dev/null
 
 sudo mount $mntPath
+
