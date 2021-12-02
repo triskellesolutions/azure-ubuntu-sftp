@@ -38,6 +38,23 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update
 sudo apt-get -y install azure-cli
 
+function installScript {
+    fileName="$1"
+    filePath="$2"
+    sudo touch $filePath$fileName
+    sudo chmod 777  $filePath$fileName
+    sudo curl -sl "https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw/cbf45e798f5924720fc8277ff595f943b7f87477/${fileName}" > $filePath$fileName
+    sudo chown root:root $filePath$fileName
+    sudo chmod 600  $filePath$fileName
+    sudo chmod +x  $filePath$fileName
+}
+
+installScript create-sftp-user.sh '/usr/local/bin/'
+installScript mount-user-sftp-path.sh '/usr/local/bin/'
+installScript sshd_config '~/'
+
+
+
 az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
 
 # config mounts
@@ -76,6 +93,7 @@ fi
 # Change permissions on the credential file so only root can read or modify the password file.
 sudo chmod 600 $smbCredentialFile
 
+echo "smbCredentialFile=$smbCredentialFile" | sudo tee -a /vmsetup/install.keys
 
 sudo  mkdir -p $storageAccountMountPath
 storageAccountSmbPathFileShare="$smbPath$storageAccountFileShareName"
