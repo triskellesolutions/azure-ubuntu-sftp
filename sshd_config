@@ -114,7 +114,7 @@ AcceptEnv LANG LC_*
 
 # override default of no subsystems
 #Subsystem sftp	/usr/lib/openssh/sftp-server
-ChrootDirectory %h
+
 
 # Enable this for more logs
 #LogLevel VERBOSE
@@ -128,3 +128,7 @@ ChrootDirectory %h
 
 # CLOUD_IMG: This file was created/modified by the Cloud Image build process
 ClientAliveInterval 120
+
+Match Group sftpusers
+        ChrootDirectory %h
+        ForceCommand internal-sftp

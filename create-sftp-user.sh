@@ -67,7 +67,7 @@ if [ -n "$gid" ]; then
     useraddOptions+=(--gid "$gid")
 fi
 
-useradd "${useraddOptions[@]}" "$user"
+useradd -g sftpusers "${useraddOptions[@]}" "$user"
 mkdir -p "/home/$user"
 chown root:root "/home/$user"
 chmod 755 "/home/$user"
@@ -98,3 +98,4 @@ if [ -d "$userKeysQueuedDir" ]; then
     chown "$uid" "$userKeysAllowedFile"
     chmod 600 "$userKeysAllowedFile"
 fi
+ 

@@ -106,3 +106,5 @@ installScript sshd_config '/etc/ssh/'
 sudo chmod -x  '/etc/ssh/sshd_config'
 
 sudo systemctl restart ssh
+
+groupadd sftpusers
