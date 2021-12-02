@@ -107,4 +107,4 @@ sudo chmod -x  '/etc/ssh/sshd_config'
 
 sudo systemctl restart ssh
 
-groupadd sftpusers
+sudo groupadd sftpusers

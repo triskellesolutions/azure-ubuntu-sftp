@@ -16,7 +16,7 @@ if [[ -z ${STORAGE_ACCOUNT_NAME} || -z ${SFTPUSER} || -z ${FILE_SHARE_NAME} ]]; 
 fi
 
 LOCAL_UID=$(id -u ${SFTPUSER})
-LOCAL_GID=$(id -u ${SFTPUSER})
+LOCAL_GID=$(id -g ${SFTPUSER})
 
 FILE_SHARE_NAME_PATH="//${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${FILE_SHARE_NAME}"
 CRED_FOLDER=/etc/smbcredentials

@@ -67,7 +67,7 @@ if [ -n "$gid" ]; then
     useraddOptions+=(--gid "$gid")
 fi
 
-useradd -g sftpusers "${useraddOptions[@]}" "$user"
+useradd "${useraddOptions[@]}" "$user"
 mkdir -p "/home/$user"
 chown root:root "/home/$user"
 chmod 755 "/home/$user"
@@ -98,4 +98,9 @@ if [ -d "$userKeysQueuedDir" ]; then
     chown "$uid" "$userKeysAllowedFile"
     chmod 600 "$userKeysAllowedFile"
 fi
- 
+
+#https://www.thegeekstuff.com/2012/03/chroot-sftp-setup/
+sudo usermod -g sftpusers -s /bin/bash $user
+
+sudo mount-user-sftp-path.sh $user
+
