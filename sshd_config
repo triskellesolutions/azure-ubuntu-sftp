@@ -113,7 +113,7 @@ UseDNS no
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
-Subsystem sftp	/usr/lib/openssh/sftp-server
+#Subsystem sftp	/usr/lib/openssh/sftp-server
 ChrootDirectory %h
 
 # Enable this for more logs
