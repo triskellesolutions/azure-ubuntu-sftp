@@ -5,6 +5,7 @@ storageAccountFileShareName=$3
 serviceAccountId=$4
 serviceAccountPassword=$5
 serviceAccountTenant=$6
+gistUrl=$7
 
 sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.keys
 
@@ -43,7 +44,7 @@ function installScript {
     filePath="$2"
     sudo touch $filePath$fileName
     sudo chmod 777  $filePath$fileName
-    sudo curl -sl "https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw/cbf45e798f5924720fc8277ff595f943b7f87477/${fileName}" > $filePath$fileName
+    sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
     sudo chown root:root $filePath$fileName
     sudo chmod 600  $filePath$fileName
     sudo chmod +x  $filePath$fileName
