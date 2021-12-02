@@ -39,23 +39,6 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update
 sudo apt-get -y install azure-cli
 
-function installScript {
-    fileName="$1"
-    filePath="$2"
-    sudo touch $filePath$fileName
-    sudo chmod 777  $filePath$fileName
-    sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
-    sudo chown root:root $filePath$fileName
-    sudo chmod 600  $filePath$fileName
-    sudo chmod +x  $filePath$fileName
-}
-
-installScript create-sftp-user.sh '/usr/local/bin/'
-installScript mount-user-sftp-path.sh '/usr/local/bin/'
-installScript sshd_config '~/'
-
-
-
 az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
 
 # config mounts
@@ -105,3 +88,21 @@ echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee
 sudo mount $storageAccountSmbPathFileShare
 
 sudo chmod 600 /vmsetup/install.keys
+
+installScript() {
+    fileName="$1"
+    filePath="$2"
+    sudo touch $filePath$fileName
+    sudo chmod 777  $filePath$fileName
+    sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
+    sudo chown root:root $filePath$fileName
+    sudo chmod 600  $filePath$fileName
+    sudo chmod +x  $filePath$fileName
+}
+
+installScript create-sftp-user.sh '/usr/local/bin/'
+installScript mount-user-sftp-path.sh '/usr/local/bin/'
+installScript sshd_config '/etc/ssh/'
+sudo chmod -x  '/etc/ssh/sshd_config'
+
+sudo systemctl restart ssh
