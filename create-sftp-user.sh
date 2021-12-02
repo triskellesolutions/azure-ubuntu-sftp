@@ -31,19 +31,6 @@ function validateArg() {
 
 . /vmsetup/install.keys
 
-
-if [ -z "$storageAccountMountPath" ]; then
-    echo "No argument supplied storageAccountMountPath:$storageAccountMountPath"
-    exit 1
-fi
-
-if [ -z "$storageAccountSmbPathFileShare" ]; then
-    echo "No argument supplied storageAccountSmbPathFileShare:$storageAccountSmbPathFileShare"
-    exit 1
-fi
-
-
-
 log "Parsing user data: \"$1\""
 IFS=':' read -ra args <<< "$1"
 
@@ -111,34 +98,3 @@ if [ -d "$userKeysQueuedDir" ]; then
     chown "$uid" "$userKeysAllowedFile"
     chmod 600 "$userKeysAllowedFile"
 fi
-
-dirPath="/home/$user/downloads"
-mntPath="$storageAccountMountPath/$user/downloads"
-if [ ! -d "$dirPath" ]; then
-    log "Creating directory: $dirPath"
-    sudo mkdir -p "$storageAccountMountPath/$user/downloads"
-    sudo mkdir -p "$dirPath"
-    echo "$storageAccountSmbPathFileShare/$user/downloads /home/$user/downloads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$uid" |  sudo tee -a /etc/fstab > /dev/null
-    sudo mount "/home/$user/downloads"
-    sudo chown -R "$uid:$uid" "$storageAccountMountPath/$user/downloads"
-    sudo chmod 700 "$storageAccountMountPath/$user/downloads"
-    sudo chown -R "$uid:$uid" "$dirPath"
-    sudo chmod 700 "$dirPath"
-else
-    log "Directory already exists: $dirPath"
-fi
-
-dirPath="/home/$user/uploads"
-mntPath="$storageAccountMountPath/$user/uploads"
-if [ ! -d "$dirPath" ]; then
-    log "Creating directory: $dirPath"
-    sudo mkdir -p "$storageAccountMountPath/$user/uploads"
-    sudo mkdir -p "$dirPath"
-    echo "$storageAccountSmbPathFileShare/$user/uploads /home/$user/uploads cifs nofail,credentials=/etc/smbcredentials/tsscdesftp.cred,serverino,uid=$uid,gid=$uid" |  sudo tee -a /etc/fstab > /dev/null
-    sudo mount "/home/$user/uploads"
-    sudo chown -R "$uid:$uid" "$dirPath"
-    sudo chmod 700 "$dirPath"
-else
-    log "Directory already exists: $dirPath"
-fi
-
