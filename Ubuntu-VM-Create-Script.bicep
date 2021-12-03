@@ -52,13 +52,13 @@
 
   ###############################################################################
   #	{
-	#	  "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-	#	  "displayName": "display-name",
-	#	  "name": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-	#	  "password": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
-	#	  "tenant": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-	#	}
-	################################################################################
+  #	  "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  #	  "displayName": "display-name",
+  #	  "name": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  #	  "password": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,
+  #	  "tenant": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  #	}
+  ################################################################################
 
   az deployment group create `
   --resource-group <resource-group> `
