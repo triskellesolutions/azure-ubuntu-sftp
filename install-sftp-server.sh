@@ -9,13 +9,13 @@ gistUrl=$7
 
 sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.keys
 
-echo "resourceGroupName=$1"              | sudo tee -a /vmsetup/install.keys
-echo "storageAccountName=$2"             | sudo tee -a /vmsetup/install.keys
-echo "storageAccountFileShareName=$3"    | sudo tee -a /vmsetup/install.keys
-echo "serviceAccountId=$4"               | sudo tee -a /vmsetup/install.keys
-echo "serviceAccountPassword=$5"         | sudo tee -a /vmsetup/install.keys
-echo "serviceAccountTenant=$6"           | sudo tee -a /vmsetup/install.keys
-echo "storageAccountMountPath=/mount/$storageAccountName/$storageAccountFileShareName" | sudo tee -a /vmsetup/install.keys
+sudo echo "resourceGroupName=$1"               >> /vmsetup/install.keys
+sudo echo "storageAccountName=$2"              >> /vmsetup/install.keys
+sudo echo "storageAccountFileShareName=$3"     >> /vmsetup/install.keys
+sudo echo "serviceAccountId=$4"                >> /vmsetup/install.keys
+sudo echo "serviceAccountPassword=$5"          >> /vmsetup/install.keys
+sudo echo "serviceAccountTenant=$6"            >> /vmsetup/install.keys
+sudo echo "storageAccountMountPath=/mount/$storageAccountName/$storageAccountFileShareName"  >> /vmsetup/install.keys
 
 sudo dpkg --configure -a
 sudo apt-get -y update

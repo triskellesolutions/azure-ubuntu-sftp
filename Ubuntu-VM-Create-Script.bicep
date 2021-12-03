@@ -1,6 +1,6 @@
 /*
         This script will:
-        - Depends on gist: https://gist.github.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab
+        - Depends on gist: https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3
           - This script provides the install script, create user script, mount user sftp drives script,
             and sshd_confg file.
             - create user script, mount user sftp drives script are copied to /usr/local/bin
@@ -133,8 +133,8 @@ param serviceAccountPassword string
 @secure()
 param serviceAccountTenant string
 
-@description('This is the path to the version of gist we are using. Example: https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw/d76809b6c5c5f07984ea131124f9cd093b7cc4f1')
-param gistUrlPath string = 'https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw/d76809b6c5c5f07984ea131124f9cd093b7cc4f1'
+@description('This is the path to the version of gist we are using. Example: https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw/<file-name>')
+param gistUrlPath string = 'https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw'
 
 
 var imagePublisher = 'Canonical'
