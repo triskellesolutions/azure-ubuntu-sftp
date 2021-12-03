@@ -62,6 +62,8 @@
   #	}
   ################################################################################
 
+  az login --service-principal -u $rbac.appId -p $rbac.password --tenant $rbac.tenant
+
   az deployment group create `
   --resource-group $group.name `
   --template-file "<path to script>/Ubuntu-VM-Create-Script.bicep" `
