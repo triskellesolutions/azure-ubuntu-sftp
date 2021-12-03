@@ -39,6 +39,7 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update
 sudo apt-get -y install azure-cli
 
+echo az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
 az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
 
 # config mounts

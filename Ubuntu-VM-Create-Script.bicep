@@ -1,5 +1,5 @@
 /*
-        This script will:
+        This script:
         - Depends on gist: https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3
           - This script provides the install script, create user script, mount user sftp drives script,
             and sshd_confg file.
@@ -39,14 +39,16 @@
   az login
 
   # create the rsouece group that will hold the vm instance
-
-  az group create --name "<resource-group>" --location "<location>" --subscription "<subscription-id>"
+  $group = az group create --name "<resource-group>" --location "<location>" --subscription "<subscription-id>" | ConvertFrom-Json
+  echo $group
 
   # create the service account
-  az ad sp create-for-rbac `
-    --name "<resource-group>" `
+  $rbac = az ad sp create-for-rbac `
+    --name $group.name`
     --role contributor `
-    --scopes /subscriptions/<subscription-id>/resourceGroups/<resource-group>
+    --scopes $group.id | ConvertFrom-Json
+
+  echo $rbac
 
   # capture output of the command to use in the bicep script
 
@@ -61,38 +63,37 @@
   ################################################################################
 
   az deployment group create `
-  --resource-group <resource-group> `
-  --template-file "<path to script>ubuntu-vm.bicep" `
+  --resource-group $group.name `
+  --template-file "<path to script>/Ubuntu-VM-Create-Script.bicep" `
   --parameters  `
     resourcePrefix='<prefix-that-will-be-used-on-all-related-resources-this-script-creates>' `
-    storageAccountName='storage' `
-    storageAccountFileShareName='sis' `
-    dnsNameForPublicIP='<dns-prefix-name>' `
+    storageAccountName='<storage-name-prefix-needs-unique-in-azure>' `
+    storageAccountFileShareName='<name-of-url-segment-path-of-storage>' `
+    dnsNameForPublicIP='<dns-prefix-uniqu-in-azure>' `
     ubuntuOSVersion='<version>' `
-    vmSize='vm-size' `
-    location=<location>`
-    resourceGroupName=<resouce-group-name>`
-    authenticationType='password' `
+    vmSize='<vm-size>' `
+    location='<location>' `
+    resourceGroupName='<resouce-group-name>' `
+    authenticationType='password|sshPublicKey' `
     adminUsername='<root-level-user-name-used-to-access-the-machine>' `
     adminPasswordOrKey='<strong-password>' `
-    serviceAccountId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' `
-    serviceAccountPassword='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' `
-    serviceAccountTenant='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' `
+    serviceAccountId=$rbac.appId `
+    serviceAccountPassword=$rbac.password `
+    serviceAccountTenant=$rbac.tenant | ConvertFrom-Json
+
+  echo $createvm
 
 */
 @description('The resource group prefix.  This will be used as a prefix on all resources in this group.')
 param resourcePrefix string = 'tss'
 
-@description('Unique DNS Name for the Storage Account where the Virtual Machine\'s disks will be placed.')
+@description('Unique DNS Name for the Storage Account where the Virtual Machine\'s disks will be placed. This will have the resourcePrefix prepended')
 param storageAccountName string = 'storage'
 
 @description('Unique Bucket Name for the Storage Account where the Virtual Machine\'s disks will be placed.')
 param storageAccountFileShareName string = 'fileshare'
 
-@description('Admin user name for the Virtual Machine.')
-param adminUsername string
-
-@description('Unique DNS prefix for the Public IP used to access the Virtual Machine.')
+@description('Unique DNS prefix for the Public IP used to access the Virtual Machine. alphanumeric ')
 param dnsNameForPublicIP string
 
 @allowed([
@@ -112,6 +113,9 @@ param location string = resourceGroup().location
 @description('The resource group name.')
 param resourceGroupName string = resourceGroup().name
 
+@description('Admin user name for the Virtual Machine.')
+param adminUsername string
+
 @allowed([
   'sshPublicKey'
   'password'
@@ -119,7 +123,15 @@ param resourceGroupName string = resourceGroup().name
 @description('Type of authentication to use on the Virtual Machine. SSH key is recommended.')
 param authenticationType string = 'password'
 
-@description('SSH Key or password for the Virtual Machine. SSH key is recommended.')
+@description('''SSH Key or password for the Virtual Machine. SSH key is recommended.
+if authenticationType='password':
+    The supplied password must be between 6-72 characters long and must satisfy at least 3 of password complexity requirements from the following:
+    1) Contains an uppercase character
+    2) Contains a lowercase character
+    3) Contains a numeric digit
+    4) Contains a special character
+    5) Control characters are not allowed
+'''')
 @secure()
 param adminPasswordOrKey string
 
@@ -133,8 +145,8 @@ param serviceAccountPassword string
 @secure()
 param serviceAccountTenant string
 
-@description('This is the path to the version of gist we are using. Example: https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw/<file-name>')
-param gistUrlPath string = 'https://gist.githubusercontent.com/johnbabb/e385e10ea9dd06ddc3ea3160e7403dab/raw'
+@description('This is the path to the version of gist we are using. Example: https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3/raw/<file-name>')
+param gistUrlPath string = 'https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3/raw'
 
 
 var imagePublisher = 'Canonical'
