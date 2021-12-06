@@ -6,6 +6,7 @@
             - create user script, mount user sftp drives script are copied to /usr/local/bin
               - these scripts are used to add sftp users and mount their drives in /home/<user>/<downloads|uploads>
             - sshd_confg is copied over to /etc/ssh/sshd_config
+            - logs are written to /vmsetup/install.log
 
         - Creates a virtual network
 
