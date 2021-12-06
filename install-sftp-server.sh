@@ -55,13 +55,12 @@ installScript() {
     sudo chmod 600  $filePath$fileName
     sudo chmod ug+x  $filePath$fileName
     code=0 && response=$(sudo stat $filePath$fileName 2>&1) || code=$?
+    echo "$response"
     if [ $code != 0 ]; then
         echo "ERROR Installing $fileName"
-        echo "$response"
     fi
-    if [ -s $filePath$fileName ]; then
+    if [ ! -s $filePath$fileName ]; then
         echo "ERROR Installing $fileName"
-        echo "$response"
     fi
 }
 
