@@ -16,7 +16,9 @@ sudo echo "storageAccountFileShareName=$3"     >> /vmsetup/install.keys
 sudo echo "serviceAccountId=$4"                >> /vmsetup/install.keys
 sudo echo "serviceAccountPassword=$5"          >> /vmsetup/install.keys
 sudo echo "serviceAccountTenant=$6"            >> /vmsetup/install.keys
+sudo echo "gistUrl=$7"                         >> /vmsetup/install.keys
 sudo echo "storageAccountMountPath=$storageAccountMountPath"  >> /vmsetup/install.keys
+
 
 sudo dpkg --configure -a
 sudo apt-get -y update
@@ -50,7 +52,7 @@ installScript() {
     sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
     sudo chown root:root $filePath$fileName
     sudo chmod 600  $filePath$fileName
-    sudo chmod +x  $filePath$fileName
+    sudo chmod ug+x  $filePath$fileName
 }
 
 installScript create-sftp-user.sh '/usr/local/bin/'
