@@ -64,6 +64,7 @@ sudo groupadd sftpusers
 code=0 && response=$(az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant 2>&1) || code=$?
 if [ $code != 0 ]; then
     echo 'Error: could not log in with the provided service account.\nFrom this point forward you will have to execute this code below on your own.'
+    echo "You will probably have to create a new secret for the account ${serviceAccountId}"
     echo $response
     exit $code
 fi
