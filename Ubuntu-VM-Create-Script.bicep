@@ -39,7 +39,11 @@
   az login
 
   # create the NEW resource group that will hold the vm instance
-  $group = az group create --name "<resource-group>" --location "<location>" --subscription "<subscription-id>" | ConvertFrom-Json
+  $group = az group create `
+    --name "<resource-group>" `
+    --location "<location>" `
+    --subscription "<subscription-id>" `
+    | ConvertFrom-Json
   echo $group
   $resourceGroupLocation=$group.location
   $resourceGroupName=$group.name
@@ -54,6 +58,10 @@
 
   echo $rbac
 
+  $serviceAccountId=$rbac.appId
+  $serviceAccountPassword=$rbac.password
+  $serviceAccountTenant=$rbac.tenant
+
   # capture output of the command to use in the bicep script
 
   ###############################################################################
@@ -67,12 +75,8 @@
   ################################################################################
 
   # login with the service account
-  $serviceAccountId=$rbac.appId
-  $serviceAccountPassword=$rbac.password
-  $serviceAccountTenant=$rbac.tenant
+
   az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
-
-
 
   az deployment group create `
   --resource-group $resourceGroupName `

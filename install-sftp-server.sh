@@ -6,6 +6,7 @@ serviceAccountId=$4
 serviceAccountPassword=$5
 serviceAccountTenant=$6
 gistUrl=$7
+storageAccountMountPath="/mount/$storageAccountName/$storageAccountFileShareName"
 
 sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.keys
 
@@ -15,7 +16,7 @@ sudo echo "storageAccountFileShareName=$3"     >> /vmsetup/install.keys
 sudo echo "serviceAccountId=$4"                >> /vmsetup/install.keys
 sudo echo "serviceAccountPassword=$5"          >> /vmsetup/install.keys
 sudo echo "serviceAccountTenant=$6"            >> /vmsetup/install.keys
-sudo echo "storageAccountMountPath=/mount/$storageAccountName/$storageAccountFileShareName"  >> /vmsetup/install.keys
+sudo echo "storageAccountMountPath=$storageAccountMountPath"  >> /vmsetup/install.keys
 
 sudo dpkg --configure -a
 sudo apt-get -y update
