@@ -47,12 +47,18 @@ sudo chmod 600 /vmsetup/install.keys
 installScript() {
     fileName="$1"
     filePath="$2"
+    echo "installing ${gistUrl}/${fileName} in $filePath$fileName"
     sudo touch $filePath$fileName
     sudo chmod 777  $filePath$fileName
     sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
     sudo chown root:root $filePath$fileName
     sudo chmod 600  $filePath$fileName
     sudo chmod ug+x  $filePath$fileName
+    code=0 && response=$(sudo stat $filePath$fileName 2>&1) || code=$?
+    if [ $code != 0 ]; then
+        echo "ERROR Installing script"
+        echo "$response"
+    fi
 }
 
 installScript create-sftp-user.sh '/usr/local/bin/'
