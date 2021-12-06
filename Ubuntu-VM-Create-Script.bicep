@@ -377,7 +377,7 @@ resource vmName_install_sfpt 'Microsoft.Compute/virtualMachines/extensions@2020-
       ]
     }
     protectedSettings: {
-      commandToExecute: ' sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.log && sh install-sftp-server.sh "${resourceGroupName}" "${fullStorageAccountName}" "${storageAccountFileShareName}" "${serviceAccountId}" "${serviceAccountPassword}" "${serviceAccountTenant}" "${gistUrlPath}" 2>&1 | sudo tee /vmsetup/install.log'
+      commandToExecute: ' sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.log && sh install-sftp-server.sh "${resourceGroupName}" "${fullStorageAccountName}" "${storageAccountFileShareName}" "${serviceAccountId}" "${serviceAccountPassword}" "${serviceAccountTenant}" "${gistUrlPath}" 2>&1 | sudo tee /vmsetup/install.log && sudo chmod 600 /vmsetup/install.log'
     }
   }
 }
