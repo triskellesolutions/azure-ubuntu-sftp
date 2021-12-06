@@ -40,7 +40,7 @@
         - Add users to the sftp server by executing:
            sudo /usr/local/bin/create-sftp-user.sh <username>:<password>
 
-        - Fix mount drive issues by executiong:
+        - Fix mount drive issues by executing:
            sudo /usr/local/bin/mount-user-sftp-path.sh <username>
 
   ##############################################################################
@@ -70,13 +70,8 @@
     --role contributor `
     --scopes $resourceGroupId | ConvertFrom-Json
 
+    # capture output of the command to use in the bicep script
   echo $rbac
-
-  $serviceAccountId=$rbac.appId
-  $serviceAccountPassword=$rbac.password
-  $serviceAccountTenant=$rbac.tenant
-
-  # capture output of the command to use in the bicep script
 
   ###############################################################################
   #	{
@@ -87,6 +82,10 @@
   #	  "tenant": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
   #	}
   ################################################################################
+
+  $serviceAccountId=$rbac.appId
+  $serviceAccountPassword=$rbac.password
+  $serviceAccountTenant=$rbac.tenant
 
   # Test the new service account and make sure you can login
 
@@ -120,8 +119,7 @@
 # Note if the error comes from the vmName_install_sfpt resource and not bicep you
 # may want to remove or delete the resources from the group and rerun the above when fixed.
 #
-# SSH INTO THE MACHINE AND REVIEW THE INSTALL LOG sudo cat /vmsetup.log
-# make sure the entry COMPLETED install-sftp-server.sh INSTALL EXECUTION"
+# SSH INTO THE MACHINE AND REVIEW THE INSTALL LOG sudo cat /vmsetup/install.log
 #
 ############################################################################################
 */
