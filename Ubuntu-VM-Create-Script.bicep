@@ -38,15 +38,19 @@
 
   az login
 
-  # create the rsouece group that will hold the vm instance
+  # create the NEW resource group that will hold the vm instance
   $group = az group create --name "<resource-group>" --location "<location>" --subscription "<subscription-id>" | ConvertFrom-Json
   echo $group
+  $resourceGroupLocation=$group.location
+  $resourceGroupName=$group.name
+  $resourceGroupId=$group.id
 
-  # create the service account
+
+  # create the service account with contrib on the new resource group
   $rbac = az ad sp create-for-rbac `
-    --name $group.name`
+    --name $resourceGroupName `
     --role contributor `
-    --scopes $group.id | ConvertFrom-Json
+    --scopes $resourceGroupId | ConvertFrom-Json
 
   echo $rbac
 
@@ -62,30 +66,43 @@
   #	}
   ################################################################################
 
-  az login --service-principal -u $rbac.appId -p $rbac.password --tenant $rbac.tenant
+  # login with the service account
+  $serviceAccountId=$rbac.appId
+  $serviceAccountPassword=$rbac.password
+  $serviceAccountTenant=$rbac.tenant
+  az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
+
+
 
   az deployment group create `
-  --resource-group $group.name `
+  --resource-group $resourceGroupName `
   --template-file "<path to script>/Ubuntu-VM-Create-Script.bicep" `
   --parameters  `
     resourcePrefix='<prefix-that-will-be-used-on-all-related-resources-this-script-creates>' `
     storageAccountName='<storage-name-prefix-needs-unique-in-azure>' `
     storageAccountFileShareName='<name-of-url-segment-path-of-storage>' `
     dnsNameForPublicIP='<dns-prefix-uniqu-in-azure>' `
-    ubuntuOSVersion='<version>' `
+    ubuntuOSVersion='18.04-LTS' `
     vmSize='<vm-size>' `
-    location='<location>' `
-    resourceGroupName='<resouce-group-name>' `
+    location=$resourceGroupLocation `
+    resourceGroupName=$resourceGroupName `
     authenticationType='password|sshPublicKey' `
     adminUsername='<root-level-user-name-used-to-access-the-machine>' `
     adminPasswordOrKey='<strong-password>' `
-    serviceAccountId=$rbac.appId `
-    serviceAccountPassword=$rbac.password `
-    serviceAccountTenant=$rbac.tenant | ConvertFrom-Json
+    serviceAccountId=$serviceAccountId `
+    serviceAccountPassword=$serviceAccountPassword `
+    serviceAccountTenant=$serviceAccountTenant | ConvertFrom-Json
 
   echo $createvm
 
+############################################################################################
+#
+# Note if the error comes from the vmName_install_sfpt resource and not bicep you
+# may want to remove or delete the resources from the group and rerun the above when fixed.
+#
+############################################################################################
 */
+
 @description('The resource group prefix.  This will be used as a prefix on all resources in this group.')
 param resourcePrefix string = 'tss'
 

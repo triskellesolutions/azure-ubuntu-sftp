@@ -39,9 +39,34 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 sudo apt-get update
 sudo apt-get -y install azure-cli
 
-echo "az login --service-principal -u ${serviceAccountId} -p ${serviceAccountPassword} --tenant ${serviceAccountTenant}"
-az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
+sudo chmod 600 /vmsetup/install.keys
 
+installScript() {
+    fileName="$1"
+    filePath="$2"
+    sudo touch $filePath$fileName
+    sudo chmod 777  $filePath$fileName
+    sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
+    sudo chown root:root $filePath$fileName
+    sudo chmod 600  $filePath$fileName
+    sudo chmod +x  $filePath$fileName
+}
+
+installScript create-sftp-user.sh '/usr/local/bin/'
+installScript mount-user-sftp-path.sh '/usr/local/bin/'
+installScript sshd_config '/etc/ssh/'
+sudo chmod -x  '/etc/ssh/sshd_config'
+
+sudo systemctl restart ssh
+
+sudo groupadd sftpusers
+
+code=0 && response=$(az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant 2>&1) || code=$?
+if [ $code != 0 ]; then
+    echo 'Error: could not log in with the provided service account.\nFrom this point forward you will have to execute this code below on your own.'
+    echo $response
+    exit $code
+fi
 # config mounts
 httpEndpoint=$(az storage account show \
     --resource-group $resourceGroupName \
@@ -88,24 +113,4 @@ echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee
 
 sudo mount $storageAccountSmbPathFileShare
 
-sudo chmod 600 /vmsetup/install.keys
 
-installScript() {
-    fileName="$1"
-    filePath="$2"
-    sudo touch $filePath$fileName
-    sudo chmod 777  $filePath$fileName
-    sudo curl -sl "${gistUrl}/${fileName}" > $filePath$fileName
-    sudo chown root:root $filePath$fileName
-    sudo chmod 600  $filePath$fileName
-    sudo chmod +x  $filePath$fileName
-}
-
-installScript create-sftp-user.sh '/usr/local/bin/'
-installScript mount-user-sftp-path.sh '/usr/local/bin/'
-installScript sshd_config '/etc/ssh/'
-sudo chmod -x  '/etc/ssh/sshd_config'
-
-sudo systemctl restart ssh
-
-sudo groupadd sftpusers
