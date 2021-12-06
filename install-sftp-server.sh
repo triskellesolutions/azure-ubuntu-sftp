@@ -115,4 +115,4 @@ echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee
 
 sudo mount $storageAccountSmbPathFileShare
 
-
+echo "COMPLETED $0 INSTALL EXECUTION"

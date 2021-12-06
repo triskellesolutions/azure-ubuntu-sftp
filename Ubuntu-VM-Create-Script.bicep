@@ -74,23 +74,25 @@
   #	}
   ################################################################################
 
-  # login with the service account
+  # Test the new service account and make sure you can login
 
   az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant
 
+  #cd to bicep script
+
   az deployment group create `
   --resource-group $resourceGroupName `
-  --template-file "<path to script>/Ubuntu-VM-Create-Script.bicep" `
+  --template-file "Ubuntu-VM-Create-Script.bicep" `
   --parameters  `
-    resourcePrefix='<prefix-that-will-be-used-on-all-related-resources-this-script-creates>' `
-    storageAccountName='<storage-name-prefix-needs-unique-in-azure>' `
+    resourcePrefix='<prefix-that-will-be-used-on-all-related-resources-this-script-creates-this-does-not-include-the-dns>' `
+    storageAccountName='<resourcePrefix-plus-this-value-must-be-unique-in-azure>' `
     storageAccountFileShareName='<name-of-url-segment-path-of-storage>' `
-    dnsNameForPublicIP='<dns-prefix-uniqu-in-azure>' `
+    dnsNameForPublicIP='<dns-prefix-unique-in-azure-in-the-location-the-resouce-is>' `
     ubuntuOSVersion='18.04-LTS' `
-    vmSize='<vm-size>' `
+    vmSize='<vm-size-make-a-good-choice-in-dev-prd>' `
     location=$resourceGroupLocation `
     resourceGroupName=$resourceGroupName `
-    authenticationType='password|sshPublicKey' `
+    authenticationType='password' `
     adminUsername='<root-level-user-name-used-to-access-the-machine>' `
     adminPasswordOrKey='<strong-password>' `
     serviceAccountId=$serviceAccountId `
@@ -364,4 +366,3 @@ resource vmName_install_sfpt 'Microsoft.Compute/virtualMachines/extensions@2020-
   }
 }
 
-output scriptLogs string = reference('${vmName_install_sfpt.id}/logs/default', vmName_install_sfpt.apiVersion, 'Full').properties.log
