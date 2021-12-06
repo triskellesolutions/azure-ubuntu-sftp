@@ -23,11 +23,24 @@
 
         - Creates a VM instance of Ubuntu:
 
-        - Executes a custom script on the VM
+        - Executes a install script on the VM to setup and configure:
               - SFTP and SSH
               - Azure cli
               - Cockpit
               - copies scripts from gists
+************************************************************************************
+        - Verfiy installation:
+            Access cockpit on port 9090 and use the terminal OR
+            SSH INTO THE MACHINE
+            REVIEW THE INSTALL LOG sudo cat /vmsetup/install.log
+            - make sure the entry COMPLETED install-sftp-server.sh INSTALL EXECUTION"
+************************************************************************************
+
+        - Add users to the sftp server by executing:
+           sudo /usr/local/bin/create-sftp-user.sh <username>:<password>
+
+        - Fix mount drive issues by executiong:
+           sudo /usr/local/bin/mount-user-sftp-path.sh <username>
 
   ##############################################################################
   # Usage
@@ -101,10 +114,13 @@
 
   echo $createvm
 
-############################################################################################
+###### ATTENTION ###################### ATTENTION ###################### ATTENTION ########
 #
 # Note if the error comes from the vmName_install_sfpt resource and not bicep you
 # may want to remove or delete the resources from the group and rerun the above when fixed.
+#
+# SSH INTO THE MACHINE AND REVIEW THE INSTALL LOG sudo cat /vmsetup.log
+# make sure the entry COMPLETED install-sftp-server.sh INSTALL EXECUTION"
 #
 ############################################################################################
 */
