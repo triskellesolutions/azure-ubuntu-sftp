@@ -17,7 +17,6 @@ fi
 
 LOCAL_UID=$(id -u ${SFTPUSER})
 LOCAL_GID=$(id -g ${SFTPUSER})
-storageAccountSmbPathFileShare
 FILE_SHARE_NAME_PATH="${storageAccountSmbPathFileShare}"
 CRED_FOLDER=/etc/smbcredentials
 CRED_FILE=${CRED_FOLDER}/${STORAGE_ACCOUNT_NAME}.cred
