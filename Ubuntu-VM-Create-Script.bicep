@@ -96,7 +96,7 @@
 
   #cd to bicep script
 
-  az deployment group create `
+ az deployment group create `
   --resource-group $resourceGroupName `
   --template-file "Ubuntu-VM-Create-Script.bicep" `
   --parameters  `
@@ -115,7 +115,6 @@
     serviceAccountPassword=$serviceAccountPassword `
     serviceAccountTenant=$serviceAccountTenant | ConvertFrom-Json
 
-  echo $createvm
 
 ###### ATTENTION ###################### ATTENTION ###################### ATTENTION ########
 #
