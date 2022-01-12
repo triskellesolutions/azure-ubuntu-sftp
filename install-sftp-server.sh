@@ -7,11 +7,8 @@ serviceAccountPassword=$5
 serviceAccountTenant=$6
 gistUrl=$7
 storageAccountMountPath="/mount/$storageAccountName/$storageAccountFileShareName"
-if [[ ! -z "$8" ]]; then
-    azureCloudEnv=$8
-else
-    azureCloudEnv=AzureCloud # AzureCloud | AzureUSGovernment
-fi
+azureCloudEnv=$8
+
 sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.keys
 
 sudo echo "resourceGroupName=$1"               >> /vmsetup/install.keys
