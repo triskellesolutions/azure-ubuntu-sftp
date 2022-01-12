@@ -76,7 +76,7 @@ sudo groupadd sftpusers
 
 sudo az cloud set --name $azureCloudEnv
 
-code=0 && response=$(az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant 2>&1) || code=$?
+code=0 && response=$(sudo az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant 2>&1) || code=$?
 if [ $code != 0 ]; then
     echo 'Error: could not log in with the provided service account.\nFrom this point forward you will have to execute this code below on your own.'
     echo "You will probably have to create a new secret for the account ${serviceAccountId}"
@@ -84,7 +84,7 @@ if [ $code != 0 ]; then
     exit $code
 fi
 # config mounts
-httpEndpoint=$(az storage account show \
+httpEndpoint=$(sudo az storage account show \
     --resource-group $resourceGroupName \
     --name $storageAccountName \
     --query "primaryEndpoints.file" --output tsv | tr -d '"')
@@ -102,7 +102,7 @@ sudo mkdir -p "/etc/smbcredentials"
 # Get the storage account key for the indicated storage account.
 # You must be logged in with az login and your user identity must have
 # permissions to list the storage account keys for this command to work.
-storageAccountKey=$(az storage account keys list \
+storageAccountKey=$(sudo az storage account keys list \
     --resource-group $resourceGroupName \
     --account-name $storageAccountName \
     --query "[0].value" --output tsv | tr -d '"')
