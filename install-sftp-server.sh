@@ -19,6 +19,7 @@ sudo echo "serviceAccountPassword=$5"          >> /vmsetup/install.keys
 sudo echo "serviceAccountTenant=$6"            >> /vmsetup/install.keys
 sudo echo "gistUrl=$7"                         >> /vmsetup/install.keys
 sudo echo "storageAccountMountPath=$storageAccountMountPath"  >> /vmsetup/install.keys
+sudo echo "azureCloudEnv=$azureCloudEnv"       >> /vmsetup/install.keys
 
 
 sudo dpkg --configure -a

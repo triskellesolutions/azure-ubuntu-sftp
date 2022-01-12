@@ -113,7 +113,7 @@
     adminPasswordOrKey='<strong-password>' `
     serviceAccountId=$serviceAccountId `
     serviceAccountPassword=$serviceAccountPassword `
-    serviceAccountTenant=$serviceAccountTenant | ConvertFrom-Json
+    serviceAccountTenant=$serviceAccountTenant
 
 
 ###### ATTENTION ###################### ATTENTION ###################### ATTENTION ########
