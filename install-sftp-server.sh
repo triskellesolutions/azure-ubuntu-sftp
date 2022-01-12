@@ -7,6 +7,7 @@ serviceAccountPassword=$5
 serviceAccountTenant=$6
 gistUrl=$7
 storageAccountMountPath="/mount/$storageAccountName/$storageAccountFileShareName"
+[[ ! -z "$8" ]] && azureCloudEnv=$8 || azureCloudEnv=AzureCloud # AzureCloud | AzureUSGovernment
 
 sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.keys
 
@@ -72,6 +73,8 @@ sudo chmod -x  '/etc/ssh/sshd_config'
 sudo systemctl restart ssh
 
 sudo groupadd sftpusers
+
+sudo az cloud set --name $azureCloudEnv
 
 code=0 && response=$(az login --service-principal -u $serviceAccountId -p $serviceAccountPassword --tenant $serviceAccountTenant 2>&1) || code=$?
 if [ $code != 0 ]; then

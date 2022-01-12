@@ -49,14 +49,17 @@
 
   # log into the right azure env where you have owner or contrib rights on
   # a subscription.  This should open a web browser to auth you.
-
+  az cloud set --name AzureUSGovernment #| --name "AzureCloud"
   az login
+  $subscriptionId="<subscription-id>"
+  az account set --subscription "${subscriptionId}"
 
   # create the NEW resource group that will hold the vm instance
+  $location="USGovArizona"
   $group = az group create `
     --name "<resource-group>" `
-    --location "<location>" `
-    --subscription "<subscription-id>" `
+    --location "${location}" `
+    --subscription "${subscriptionId}" `
     | ConvertFrom-Json
   echo $group
   $resourceGroupLocation=$group.location
@@ -188,6 +191,12 @@ param serviceAccountTenant string
 @description('This is the path to the version of gist we are using. Example: https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3/raw/<file-name>')
 param gistUrlPath string = 'https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3/raw'
 
+@allowed([
+  'AzureCloud'
+  'AzureUSGovernment'
+])
+@description('This is the azure cloud env we are working against.')
+param azureCloudEnv string
 
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
@@ -376,7 +385,7 @@ resource vmName_install_sfpt 'Microsoft.Compute/virtualMachines/extensions@2020-
       ]
     }
     protectedSettings: {
-      commandToExecute: ' sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.log && sh install-sftp-server.sh "${resourceGroupName}" "${fullStorageAccountName}" "${storageAccountFileShareName}" "${serviceAccountId}" "${serviceAccountPassword}" "${serviceAccountTenant}" "${gistUrlPath}" 2>&1 | sudo tee /vmsetup/install.log && sudo chmod 600 /vmsetup/install.log'
+      commandToExecute: ' sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.log && sh install-sftp-server.sh "${resourceGroupName}" "${fullStorageAccountName}" "${storageAccountFileShareName}" "${serviceAccountId}" "${serviceAccountPassword}" "${serviceAccountTenant}" "${gistUrlPath}" "${azureCloudEnv}" 2>&1 | sudo tee /vmsetup/install.log && sudo chmod 600 /vmsetup/install.log'
     }
   }
 }

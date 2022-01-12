@@ -17,8 +17,8 @@ fi
 
 LOCAL_UID=$(id -u ${SFTPUSER})
 LOCAL_GID=$(id -g ${SFTPUSER})
-
-FILE_SHARE_NAME_PATH="//${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${FILE_SHARE_NAME}"
+storageAccountSmbPathFileShare
+FILE_SHARE_NAME_PATH="${storageAccountSmbPathFileShare}"
 CRED_FOLDER=/etc/smbcredentials
 CRED_FILE=${CRED_FOLDER}/${STORAGE_ACCOUNT_NAME}.cred
 ROOT_MOUNT_OPTIONS="vers=3.0,credentials=${CRED_FILE},serverino"
