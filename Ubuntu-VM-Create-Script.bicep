@@ -113,7 +113,8 @@
     adminPasswordOrKey='<strong-password>' `
     serviceAccountId=$serviceAccountId `
     serviceAccountPassword=$serviceAccountPassword `
-    serviceAccountTenant=$serviceAccountTenant
+    serviceAccountTenant=$serviceAccountTenant `
+    azureCloudEnv='AzureUSGovernment'
 
 
 ###### ATTENTION ###################### ATTENTION ###################### ATTENTION ########

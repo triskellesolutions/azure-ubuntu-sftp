@@ -7,8 +7,8 @@ serviceAccountPassword=$5
 serviceAccountTenant=$6
 gistUrl=$7
 storageAccountMountPath="/mount/$storageAccountName/$storageAccountFileShareName"
-if [[ ! -z "$8" ]]; then
-    azureCloudEnv=$8
+if [[ ! -z "$a8" ]]; then
+    azureCloudEnv=$a8
 else
     azureCloudEnv=AzureCloud # AzureCloud | AzureUSGovernment
 fi
