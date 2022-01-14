@@ -198,6 +198,12 @@ param gistUrlPath string = 'https://raw.githubusercontent.com/triskellesolutions
 @description('This is the azure cloud env we are working against.')
 param azureCloudEnv string
 
+@allowed([
+  'new'
+  'existing'
+])
+param newOrExisting string = 'new'
+
 var imagePublisher = 'Canonical'
 var imageOffer = 'UbuntuServer'
 var nicName_var = '${resourcePrefix}-vm-nic'
@@ -224,7 +230,7 @@ var networkSecurityGroupName_var = '${resourcePrefix}-nsg'
 var fileShareAccessTier = 'Cool'
 var fullStorageAccountName=replace('${resourcePrefix}${storageAccountName}', '-', '')
 
-resource stg 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+resource stg 'Microsoft.Storage/storageAccounts@2021-02-01' = if (newOrExisting == 'new') {
   name: fullStorageAccountName
   location: location
   sku: {
