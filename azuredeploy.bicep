@@ -1,6 +1,6 @@
 /*
         This script:
-        - Depends on gist: https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3
+        - Depends on: https://raw.githubusercontent.com/triskellesolutions/azure-ubuntu-sftp/master
           - This script provides the install script, create user script, mount user sftp drives script,
             and sshd_confg file.
             - create user script, mount user sftp drives script are copied to /usr/local/bin
@@ -98,7 +98,7 @@
 
  az deployment group create `
   --resource-group $resourceGroupName `
-  --template-file "Ubuntu-VM-Create-Script.bicep" `
+  --template-file "azuredeploy.bicep" `
   --parameters  `
     resourcePrefix='<prefix-that-will-be-used-on-all-related-resources-this-script-creates-this-does-not-include-the-dns>' `
     storageAccountName='<resourcePrefix-plus-this-value-must-be-unique-in-azure>' `
@@ -188,8 +188,8 @@ param serviceAccountPassword string
 @secure()
 param serviceAccountTenant string
 
-@description('This is the path to the version of gist we are using. Example: https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3/raw/<file-name>')
-param gistUrlPath string = 'https://gist.github.com/john-babb-tss/6db1d1bfe72f7f4413f8e27cbba2a9f3/raw'
+@description('This is the path to the version of gist we are using. Example: https://raw.githubusercontent.com/triskellesolutions/azure-ubuntu-sftp/master/<file-name>')
+param gistUrlPath string = 'https://raw.githubusercontent.com/triskellesolutions/azure-ubuntu-sftp/master'
 
 @allowed([
   'AzureCloud'
