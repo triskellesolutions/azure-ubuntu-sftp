@@ -10,10 +10,13 @@ SFTPUSER=$1
 STORAGE_ACCOUNT_NAME="${storageAccountName}"
 FILE_SHARE_NAME="${storageAccountFileShareName}"
 
-
 if [[ -z ${STORAGE_ACCOUNT_NAME} || -z ${SFTPUSER} || -z ${FILE_SHARE_NAME} ]]; then
     exit 1
 fi
+
+mkdir -p "/home/$SFTPUSER"
+chown root:root "/home/$SFTPUSER"
+chmod 755 "/home/$SFTPUSER"
 
 LOCAL_UID=$(id -u ${SFTPUSER})
 LOCAL_GID=$(id -g ${SFTPUSER})
