@@ -18,6 +18,8 @@ mkdir -p "/home/$SFTPUSER"
 chown root:root "/home/$SFTPUSER"
 chmod 755 "/home/$SFTPUSER"
 
+sudo usermod -g sftpusers -s /bin/bash $SFTPUSER
+
 LOCAL_UID=$(id -u ${SFTPUSER})
 LOCAL_GID=$(id -g ${SFTPUSER})
 FILE_SHARE_NAME_PATH="${storageAccountSmbPathFileShare}"
