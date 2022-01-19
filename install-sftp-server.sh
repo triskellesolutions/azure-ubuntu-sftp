@@ -134,6 +134,9 @@ sudo mount $storageAccountSmbPathFileShare
 
 # install certbot and ssls
 # https://certbot.eff.org/instructions?ws=other&os=ubuntubionic
+echo "---------------------------------------------------------------------------"
+echo "- Begin certbot install"
+echo "---------------------------------------------------------------------------"
 sudo snap install core; sudo snap refresh core;
 sudo apt-get remove certbot
 sudo snap install --classic certbot
