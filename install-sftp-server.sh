@@ -34,35 +34,6 @@ sudo apt -y install -t ${VERSION_CODENAME}-backports cockpit
 sudo systemctl --now enable cockpit.socket
 sudo ufw allow 9090/tcp
 
-# install certbot and ssls
-# https://certbot.eff.org/instructions?ws=other&os=ubuntubionic
-sudo snap install core; sudo snap refresh core;
-sudo apt-get remove certbot
-sudo snap install --classic certbot
-sudo ln -s /snap/bin/certbot /usr/bin/certbot
-
-# sudo certbot certonly --standalone --agree-tos --email YOUR-EMAIL-ADDRESS -d COCKPIT.YOUR-DOMAIN.COM
-
-#/*
-# https://github.com/cockpit-project/cockpit/wiki/Cockpit-with-LetsEncrypt
-# cockpit configuration
-# Create /etc/letsencrypt/deploy/update_cockpit_certificate.sh and replace your domain:
-#
-# DOMAIN=COCKPIT.YOUR-DOMAIN.COM
-#
-# # Copy cert for cockpit
-# install -m 644 /etc/letsencrypt/live/$DOMAIN/fullchain.pem /etc/cockpit/ws-certs.d/1-letsencrypt.cert
-# install -m 640 -g cockpit-ws /etc/letsencrypt/live/$DOMAIN/privkey.pem /etc/cockpit/ws-certs.d/1-letsencrypt.key
-#
-# # force a restart to pick up new certificate; this will interrupt existing sessions!
-# # if you don't do this, cockpit.service will idle-timeout a minute ,after the last session closed
-# systemctl stop cockpit.service
-# After that, ensure that the script is executable:
-#
-# chmod a+x /etc/letsencrypt/deploy/update_cockpit_certificate.sh
-#*/
-
-
 # install azure cli
 curl -sL https://packages.microsoft.com/keys/microsoft.asc |
     gpg --dearmor |
@@ -159,5 +130,34 @@ echo "$storageAccountSmbPathFileShare $storageAccountMountPath cifs nofail,crede
 echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee -a /vmsetup/install.keys
 
 sudo mount $storageAccountSmbPathFileShare
+
+
+# install certbot and ssls
+# https://certbot.eff.org/instructions?ws=other&os=ubuntubionic
+sudo snap install core; sudo snap refresh core;
+sudo apt-get remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
+# sudo certbot certonly --standalone --agree-tos --email YOUR-EMAIL-ADDRESS -d COCKPIT.YOUR-DOMAIN.COM
+
+#/*
+# https://github.com/cockpit-project/cockpit/wiki/Cockpit-with-LetsEncrypt
+# cockpit configuration
+# Create /etc/letsencrypt/deploy/update_cockpit_certificate.sh and replace your domain:
+#
+# DOMAIN=COCKPIT.YOUR-DOMAIN.COM
+#
+# # Copy cert for cockpit
+# install -m 644 /etc/letsencrypt/live/$DOMAIN/fullchain.pem /etc/cockpit/ws-certs.d/1-letsencrypt.cert
+# install -m 640 -g cockpit-ws /etc/letsencrypt/live/$DOMAIN/privkey.pem /etc/cockpit/ws-certs.d/1-letsencrypt.key
+#
+# # force a restart to pick up new certificate; this will interrupt existing sessions!
+# # if you don't do this, cockpit.service will idle-timeout a minute ,after the last session closed
+# systemctl stop cockpit.service
+# After that, ensure that the script is executable:
+#
+# chmod a+x /etc/letsencrypt/deploy/update_cockpit_certificate.sh
+#*/
 
 echo "COMPLETED $0 INSTALL EXECUTION"
