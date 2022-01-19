@@ -41,3 +41,19 @@ if [ $code != 0 ]; then
     echo "chown failed:  ${response}"
 fi
 
+# make backup
+sudo cp -f /etc/fstab /etc/fstab".`printf '%(%Y%m%d_%H%M%S)T\n'`"
+# temp file
+temp_file="/etc/fstab.temp.`printf '%(%Y%m%d_%H%M%S)T\n'`"
+sudo touch $temp_file
+sudo chmod 777 $temp_file
+sudo echo "" > $temp_file
+while read line; do
+    if ! grep -qs "/home/$user/" <<< "${line}"; then
+        sudo echo "$line" >> $temp_file
+    fi
+done < /etc/fstab
+
+sudo mv $temp_file /etc/fstab
+sudo chmod 644 /etc/fstab
+sudo chown root:root /etc/fstab
