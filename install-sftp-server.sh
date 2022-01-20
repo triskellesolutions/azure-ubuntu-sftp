@@ -66,6 +66,7 @@ installScript() {
     fi
 }
 
+installScript cockpit-users.tar.gz '~/'
 installScript create-sftp-user.sh '/usr/local/bin/'
 installScript mount-user-sftp-path.sh '/usr/local/bin/'
 installScript unmount-user-sftp-path.sh '/usr/local/bin/'
