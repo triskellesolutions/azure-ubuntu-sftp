@@ -142,25 +142,28 @@ sudo apt-get remove certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
-# sudo certbot certonly --standalone --agree-tos --email YOUR-EMAIL-ADDRESS -d COCKPIT.YOUR-DOMAIN.COM
-
-#/*
-# https://github.com/cockpit-project/cockpit/wiki/Cockpit-with-LetsEncrypt
-# cockpit configuration
-# Create /etc/letsencrypt/deploy/update_cockpit_certificate.sh and replace your domain:
-#
-# DOMAIN=COCKPIT.YOUR-DOMAIN.COM
-#
-# # Copy cert for cockpit
-# install -m 644 /etc/letsencrypt/live/$DOMAIN/fullchain.pem /etc/cockpit/ws-certs.d/1-letsencrypt.cert
-# install -m 640 -g cockpit-ws /etc/letsencrypt/live/$DOMAIN/privkey.pem /etc/cockpit/ws-certs.d/1-letsencrypt.key
-#
-# # force a restart to pick up new certificate; this will interrupt existing sessions!
-# # if you don't do this, cockpit.service will idle-timeout a minute ,after the last session closed
-# systemctl stop cockpit.service
-# After that, ensure that the script is executable:
-#
-# chmod a+x /etc/letsencrypt/deploy/update_cockpit_certificate.sh
-#*/
+echo "---------------------------------------------------------------------------"
+echo "- TODO: certbot configuration"
+echo "-     Complete the following "
+echo "---------------------------------------------------------------------------"
+echo "# sudo certbot certonly --standalone --agree-tos --email YOUR-EMAIL-ADDRESS -d COCKPIT.YOUR-DOMAIN.COM                 "
+echo "#/*                                                                                                                    "
+echo "# https://github.com/cockpit-project/cockpit/wiki/Cockpit-with-LetsEncrypt                                             "
+echo "# cockpit configuration                                                                                                "
+echo "# Create /etc/letsencrypt/deploy/update_cockpit_certificate.sh and replace your domain:                                "
+echo "#                                                                                                                      "
+echo "# DOMAIN=COCKPIT.YOUR-DOMAIN.COM                                                                                       "
+echo "#                                                                                                                      "
+echo "# # Copy cert for cockpit                                                                                              "
+echo "# install -m 644 /etc/letsencrypt/live/\$DOMAIN/fullchain.pem /etc/cockpit/ws-certs.d/1-letsencrypt.cert                "
+echo "# install -m 640 -g cockpit-ws /etc/letsencrypt/live/\$DOMAIN/privkey.pem /etc/cockpit/ws-certs.d/1-letsencrypt.key     "
+echo "#                                                                                                                      "
+echo "# # force a restart to pick up new certificate; this will interrupt existing sessions!                                 "
+echo "# # if you don't do this, cockpit.service will idle-timeout a minute ,after the last session closed                    "
+echo "# systemctl stop cockpit.service                                                                                       "
+echo "# After that, ensure that the script is executable:                                                                    "
+echo "#                                                                                                                      "
+echo "# chmod a+x /etc/letsencrypt/deploy/update_cockpit_certificate.sh                                                      "
+echo "#*/                                                                                                                    "
 
 echo "COMPLETED $0 INSTALL EXECUTION"
