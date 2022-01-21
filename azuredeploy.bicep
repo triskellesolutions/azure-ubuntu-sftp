@@ -205,7 +205,7 @@ param azureCloudEnv string
 param newOrExisting string = 'new'
 
 var _resourcePrefix = ((newOrExisting ==  'new') ? resourcePrefix : ((newOrExisting ==  'existing') ? resourcePrefix : resourcePrefix))
-var _storageAccountName = ((newOrExisting ==  'new') ? storageAccountName : ((newOrExisting ==  'existing') ? storageAccountName : storageAccountName))
+var _storageAccountName = ((newOrExisting ==  'new') ? replace('${resourcePrefix}${storageAccountName}', '-', '') : ((newOrExisting ==  'existing') ? storageAccountName : storageAccountName))
 var _storageAccountFileShareName = ((newOrExisting ==  'new') ? storageAccountFileShareName : ((newOrExisting ==  'existing') ? storageAccountFileShareName : storageAccountFileShareName))
 var _dnsNameForPublicIP = ((newOrExisting ==  'new') ? dnsNameForPublicIP : ((newOrExisting ==  'existing') ? dnsNameForPublicIP : dnsNameForPublicIP))
 var _ubuntuOSVersion = ((newOrExisting ==  'new') ? ubuntuOSVersion : ((newOrExisting ==  'existing') ? ubuntuOSVersion : ubuntuOSVersion))
@@ -245,8 +245,13 @@ var _linuxConfiguration = {
 }
 var _networkSecurityGroupName = '${_resourcePrefix}-nsg'
 
+// resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' existing = {
+//   name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
+//   scope: resourceGroup(_storageAccountResourceGroupName)
+// }
 
 var _fileShareAccessTier = 'Cool'
+
 resource storageAccountResource 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: _storageAccountName
   location: _location
@@ -256,27 +261,18 @@ resource storageAccountResource 'Microsoft.Storage/storageAccounts@2021-02-01' =
   kind: 'StorageV2'
   properties: {
     accessTier: _fileShareAccessTier
-    isHnsEnabled: true
-    isNfsV3Enabled: true
   }
 }
-// resource storageAccountName_default_fileShareName 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
-//   name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
-//   properties: {
-//     accessTier: _fileShareAccessTier
-//   }
-//   dependsOn: [
-//     stg
-//   ]
-// }
 
-resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
+resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
   name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
+  properties: {
+    accessTier: _fileShareAccessTier
+  }
   dependsOn: [
     storageAccountResource
   ]
 }
-
 
 resource publicIPAddressNameResource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: _publicIPAddressName

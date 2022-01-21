@@ -86,7 +86,7 @@ echo "--------------------------------------------------------------------------
 echo "- Patch cockpit users"
 echo "---------------------------------------------------------------------------"
 
-installScript cockpit-users.tar.gz '/usr/share/cockpit'
+installScript cockpit-users.tar.gz '/usr/share/cockpit/'
 sudo tar -czvf /usr/share/cockpit/cockpit-users.org.tar.gz /usr/share/cockpit/users
 sudo rm -fr /usr/share/cockpit/users
 sudo tar -xvzf '/usr/share/cockpit/cockpit-users.tar.gz' -C /usr/share/cockpit
