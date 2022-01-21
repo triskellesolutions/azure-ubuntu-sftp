@@ -66,16 +66,38 @@ installScript() {
     fi
 }
 
-installScript cockpit-users.tar.gz '~/'
+echo "---------------------------------------------------------------------------"
+echo "- Install /usr/local/bin/"
+echo "---------------------------------------------------------------------------"
 installScript create-sftp-user.sh '/usr/local/bin/'
 installScript mount-user-sftp-path.sh '/usr/local/bin/'
 installScript unmount-user-sftp-path.sh '/usr/local/bin/'
+
+echo "---------------------------------------------------------------------------"
+echo "- Config sshd"
+echo "---------------------------------------------------------------------------"
+
 installScript sshd_config '/etc/ssh/'
 sudo chmod -x  '/etc/ssh/sshd_config'
-
 sudo systemctl restart ssh
-
 sudo groupadd sftpusers
+
+echo "---------------------------------------------------------------------------"
+echo "- Patch cockpit users"
+echo "---------------------------------------------------------------------------"
+
+installScript cockpit-users.tar.gz '/usr/share/cockpit'
+sudo tar -czvf /usr/share/cockpit/cockpit-users.org.tar.gz /usr/share/cockpit/users
+sudo rm -fr /usr/share/cockpit/users
+sudo tar -xvzf '/usr/share/cockpit/cockpit-users.tar.gz' -C /usr/share/cockpit
+sudo chown -R root:root /usr/share/cockpit/users
+sudo chmod -R 755 /usr/share/cockpit/users
+sudo systemctl restart cockpit
+
+
+echo "---------------------------------------------------------------------------"
+echo "- Config azure storage"
+echo "---------------------------------------------------------------------------"
 
 sudo az cloud set --name $azureCloudEnv
 
@@ -132,11 +154,8 @@ echo "storageAccountSmbPathFileShare=$storageAccountSmbPathFileShare" | sudo tee
 
 sudo mount $storageAccountSmbPathFileShare
 
-
-# install certbot and ssls
-# https://certbot.eff.org/instructions?ws=other&os=ubuntubionic
 echo "---------------------------------------------------------------------------"
-echo "- Begin certbot install"
+echo "- Install certbot"
 echo "---------------------------------------------------------------------------"
 sudo snap install core; sudo snap refresh core;
 sudo apt-get remove certbot
@@ -147,6 +166,7 @@ echo "--------------------------------------------------------------------------
 echo "- TODO: certbot configuration"
 echo "-     Complete the following "
 echo "---------------------------------------------------------------------------"
+echo "# https://certbot.eff.org/instructions?ws=other&os=ubuntubionic"
 echo "# sudo certbot certonly --standalone --agree-tos --email YOUR-EMAIL-ADDRESS -d COCKPIT.YOUR-DOMAIN.COM                 "
 echo "#/*                                                                                                                    "
 echo "# https://github.com/cockpit-project/cockpit/wiki/Cockpit-with-LetsEncrypt                                             "
@@ -156,8 +176,8 @@ echo "#                                                                         
 echo "# DOMAIN=COCKPIT.YOUR-DOMAIN.COM                                                                                       "
 echo "#                                                                                                                      "
 echo "# # Copy cert for cockpit                                                                                              "
-echo "# install -m 644 /etc/letsencrypt/live/\$DOMAIN/fullchain.pem /etc/cockpit/ws-certs.d/1-letsencrypt.cert                "
-echo "# install -m 640 -g cockpit-ws /etc/letsencrypt/live/\$DOMAIN/privkey.pem /etc/cockpit/ws-certs.d/1-letsencrypt.key     "
+echo "# install -m 644 /etc/letsencrypt/live/\$DOMAIN/fullchain.pem /etc/cockpit/ws-certs.d/1-letsencrypt.cert               "
+echo "# install -m 640 -g cockpit-ws /etc/letsencrypt/live/\$DOMAIN/privkey.pem /etc/cockpit/ws-certs.d/1-letsencrypt.key    "
 echo "#                                                                                                                      "
 echo "# # force a restart to pick up new certificate; this will interrupt existing sessions!                                 "
 echo "# # if you don't do this, cockpit.service will idle-timeout a minute ,after the last session closed                    "

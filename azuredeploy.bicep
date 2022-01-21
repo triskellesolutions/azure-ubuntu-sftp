@@ -103,11 +103,11 @@
     resourcePrefix='<prefix-that-will-be-used-on-all-related-resources-this-script-creates-this-does-not-include-the-dns>' `
     storageAccountName='<resourcePrefix-plus-this-value-must-be-unique-in-azure>' `
     storageAccountFileShareName='<name-of-url-segment-path-of-storage>' `
+    storageAccountResouceGroupName=$resourceGroupName `
     dnsNameForPublicIP='<dns-prefix-unique-in-azure-in-the-location-the-resouce-is>' `
     ubuntuOSVersion='18.04-LTS' `
     vmSize='<vm-size-make-a-good-choice-in-dev-prd>' `
     location=$resourceGroupLocation `
-    resourceGroupName=$resourceGroupName `
     authenticationType='password' `
     adminUsername='<root-level-user-name-used-to-access-the-machine>' `
     adminPasswordOrKey='<strong-password>' `
@@ -136,6 +136,9 @@ param storageAccountName string = 'storage'
 @description('Unique Bucket Name for the Storage Account where the Virtual Machine\'s disks will be placed.')
 param storageAccountFileShareName string = 'fileshare'
 
+@description('The resource group name for the storage account.')
+param storageAccountResouceGroupName string = resourceGroup().name
+
 @description('Unique DNS prefix for the Public IP used to access the Virtual Machine. alphanumeric ')
 param dnsNameForPublicIP string
 
@@ -152,9 +155,6 @@ param vmSize string = 'Standard_B2s'
 
 @description('Location for all resources.')
 param location string = resourceGroup().location
-
-@description('The resource group name.')
-param resourceGroupName string = resourceGroup().name
 
 @description('Admin user name for the Virtual Machine.')
 param adminUsername string
@@ -204,64 +204,94 @@ param azureCloudEnv string
 ])
 param newOrExisting string = 'new'
 
-var imagePublisher = 'Canonical'
-var imageOffer = 'UbuntuServer'
-var nicName_var = '${resourcePrefix}-vm-nic'
-var addressPrefix = '10.0.0.0/16'
-var subnetName = '${resourcePrefix}-subnet'
-var subnetPrefix = '10.0.0.0/24'
-var publicIPAddressName_var = '${resourcePrefix}-public-ip'
-var publicIPAddressType = 'Dynamic'
-var vmName_var = '${resourcePrefix}-ubuntu-vm'
-var virtualNetworkName_var = '${resourcePrefix}-vnet'
-var subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', virtualNetworkName_var, subnetName)
-var linuxConfiguration = {
+var _resourcePrefix = ((newOrExisting ==  'new') ? resourcePrefix : ((newOrExisting ==  'existing') ? resourcePrefix : resourcePrefix))
+var _storageAccountName = ((newOrExisting ==  'new') ? storageAccountName : ((newOrExisting ==  'existing') ? storageAccountName : storageAccountName))
+var _storageAccountFileShareName = ((newOrExisting ==  'new') ? storageAccountFileShareName : ((newOrExisting ==  'existing') ? storageAccountFileShareName : storageAccountFileShareName))
+var _dnsNameForPublicIP = ((newOrExisting ==  'new') ? dnsNameForPublicIP : ((newOrExisting ==  'existing') ? dnsNameForPublicIP : dnsNameForPublicIP))
+var _ubuntuOSVersion = ((newOrExisting ==  'new') ? ubuntuOSVersion : ((newOrExisting ==  'existing') ? ubuntuOSVersion : ubuntuOSVersion))
+var _vmSize = ((newOrExisting ==  'new') ? vmSize : ((newOrExisting ==  'existing') ? vmSize : vmSize))
+var _location = ((newOrExisting ==  'new') ? location : ((newOrExisting ==  'existing') ? location : location))
+var _storageAccountResourceGroupName = ((newOrExisting ==  'new') ? storageAccountResouceGroupName : ((newOrExisting ==  'existing') ? storageAccountResouceGroupName : storageAccountResouceGroupName))
+var _adminUsername = ((newOrExisting ==  'new') ? adminUsername : ((newOrExisting ==  'existing') ? adminUsername : adminUsername))
+var _authenticationType = ((newOrExisting ==  'new') ? authenticationType : ((newOrExisting ==  'existing') ? authenticationType : authenticationType))
+var _adminPasswordOrKey = ((newOrExisting ==  'new') ? adminPasswordOrKey : ((newOrExisting ==  'existing') ? adminPasswordOrKey : adminPasswordOrKey))
+var _serviceAccountId = ((newOrExisting ==  'new') ? serviceAccountId : ((newOrExisting ==  'existing') ? serviceAccountId : serviceAccountId))
+var _serviceAccountPassword = ((newOrExisting ==  'new') ? serviceAccountPassword : ((newOrExisting ==  'existing') ? serviceAccountPassword : serviceAccountPassword))
+var _serviceAccountTenant = ((newOrExisting ==  'new') ? serviceAccountTenant : ((newOrExisting ==  'existing') ? serviceAccountTenant : serviceAccountTenant))
+var _gistUrlPath = ((newOrExisting ==  'new') ? gistUrlPath : ((newOrExisting ==  'existing') ? gistUrlPath : gistUrlPath))
+var _azureCloudEnv = ((newOrExisting ==  'new') ? azureCloudEnv : ((newOrExisting ==  'existing') ? azureCloudEnv : azureCloudEnv))
+
+var _imagePublisher = 'Canonical'
+var _imageOffer = 'UbuntuServer'
+var _nicName = '${_resourcePrefix}-vm-nic'
+var _addressPrefix = '10.0.0.0/16'
+var _subnetName = '${_resourcePrefix}-subnet'
+var _subnetPrefix = '10.0.0.0/24'
+var _publicIPAddressName = '${_resourcePrefix}-public-ip'
+var _publicIPAddressType = 'Dynamic'
+var _vmName = '${_resourcePrefix}-ubuntu-vm'
+var _virtualNetworkName = '${_resourcePrefix}-vnet'
+var _subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', _virtualNetworkName, _subnetName)
+var _linuxConfiguration = {
   disablePasswordAuthentication: true
   ssh: {
     publicKeys: [
       {
-        path: '/home/${adminUsername}/.ssh/authorized_keys'
-        keyData: adminPasswordOrKey
+        path: '/home/${_adminUsername}/.ssh/authorized_keys'
+        keyData: _adminPasswordOrKey
       }
     ]
   }
 }
-var networkSecurityGroupName_var = '${resourcePrefix}-nsg'
-var fileShareAccessTier = 'Cool'
-var fullStorageAccountName=replace('${resourcePrefix}${storageAccountName}', '-', '')
+var _networkSecurityGroupName = '${_resourcePrefix}-nsg'
 
-resource stg 'Microsoft.Storage/storageAccounts@2021-02-01' = if (newOrExisting == 'new') {
-  name: fullStorageAccountName
-  location: location
+
+var _fileShareAccessTier = 'Cool'
+resource storageAccountResource 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+  name: _storageAccountName
+  location: _location
   sku: {
     name: 'Standard_LRS'
   }
   kind: 'StorageV2'
-}
-resource storageAccountName_default_fileShareName 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
-  name: '${fullStorageAccountName}/default/${storageAccountFileShareName}'
   properties: {
-    accessTier: fileShareAccessTier
+    accessTier: _fileShareAccessTier
+    isHnsEnabled: true
+    isNfsV3Enabled: true
   }
+}
+// resource storageAccountName_default_fileShareName 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
+//   name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
+//   properties: {
+//     accessTier: _fileShareAccessTier
+//   }
+//   dependsOn: [
+//     stg
+//   ]
+// }
+
+resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
+  name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
   dependsOn: [
-    stg
+    storageAccountResource
   ]
 }
 
-resource publicIPAddressName 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
-  name: publicIPAddressName_var
-  location: location
+
+resource publicIPAddressNameResource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+  name: _publicIPAddressName
+  location: _location
   properties: {
-    publicIPAllocationMethod: publicIPAddressType
+    publicIPAllocationMethod: _publicIPAddressType
     dnsSettings: {
-      domainNameLabel: dnsNameForPublicIP
+      domainNameLabel: _dnsNameForPublicIP
     }
   }
 }
 
-resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-05-01' =  {
-  name: networkSecurityGroupName_var
-  location: location
+resource networkSecurityGroupNameResource 'Microsoft.Network/networkSecurityGroups@2020-05-01' =  {
+  name: _networkSecurityGroupName
+  location: _location
   properties: {
     securityRules: [
       {
@@ -290,26 +320,39 @@ resource networkSecurityGroupName 'Microsoft.Network/networkSecurityGroups@2020-
           destinationAddressPrefix: '*'
         }
       }
+      {
+        name: 'default-allow-80'
+        properties: {
+          priority: 1003
+          access: 'Allow'
+          direction: 'Inbound'
+          destinationPortRange: '80'
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
     ]
   }
 }
 
-resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' =  {
-  name: virtualNetworkName_var
-  location: location
+resource virtualNetworkNameResource 'Microsoft.Network/virtualNetworks@2020-05-01' =  {
+  name: _virtualNetworkName
+  location: _location
   properties: {
     addressSpace: {
       addressPrefixes: [
-        addressPrefix
+        _addressPrefix
       ]
     }
     subnets: [
       {
-        name: subnetName
+        name: _subnetName
         properties: {
-          addressPrefix: subnetPrefix
+          addressPrefix: _subnetPrefix
           networkSecurityGroup: {
-            id: networkSecurityGroupName.id
+            id: networkSecurityGroupNameResource.id
           }
         }
       }
@@ -317,9 +360,9 @@ resource virtualNetworkName 'Microsoft.Network/virtualNetworks@2020-05-01' =  {
   }
 }
 
-resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' =  {
-  name: nicName_var
-  location: location
+resource nicNameResource 'Microsoft.Network/networkInterfaces@2020-05-01' =  {
+  name: _nicName
+  location: _location
   properties: {
     ipConfigurations: [
       {
@@ -327,58 +370,58 @@ resource nicName 'Microsoft.Network/networkInterfaces@2020-05-01' =  {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
-            id: publicIPAddressName.id
+            id: publicIPAddressNameResource.id
           }
           subnet: {
-            id: subnetRef
+            id: _subnetRef
           }
         }
       }
     ]
   }
   dependsOn: [
-    virtualNetworkName
+    virtualNetworkNameResource
   ]
 }
 
-resource vmName 'Microsoft.Compute/virtualMachines@2020-06-01' = {
-  name: vmName_var
-  location: location
+resource _vmNameResource 'Microsoft.Compute/virtualMachines@2020-06-01' = {
+  name: _vmName
+  location: _location
   properties: {
     hardwareProfile: {
-      vmSize: vmSize
+      vmSize: _vmSize
     }
     osProfile: {
-      computerName: vmName_var
-      adminUsername: adminUsername
-      adminPassword: adminPasswordOrKey
-      linuxConfiguration: ((authenticationType == 'password') ? json('null') : linuxConfiguration)
+      computerName: _vmName
+      adminUsername: _adminUsername
+      adminPassword: _adminPasswordOrKey
+      linuxConfiguration: ((_authenticationType == 'password') ? json('null') : _linuxConfiguration)
     }
     storageProfile: {
       imageReference: {
-        publisher: imagePublisher
-        offer: imageOffer
-        sku: ubuntuOSVersion
+        publisher: _imagePublisher
+        offer: _imageOffer
+        sku: _ubuntuOSVersion
         version: 'latest'
       }
     }
     networkProfile: {
       networkInterfaces: [
         {
-          id: nicName.id
+          id: nicNameResource.id
         }
       ]
     }
   }
   dependsOn: [
-    storageAccountName_default_fileShareName
+    storageAccountContainerShareResource
   ]
 }
 
 resource vmName_install_sfpt 'Microsoft.Compute/virtualMachines/extensions@2020-06-01' = {
-  parent: vmName
+  parent: _vmNameResource
   name: 'install_sftp'
-  location: location
+  location: _location
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
     type: 'CustomScript'
@@ -387,11 +430,11 @@ resource vmName_install_sfpt 'Microsoft.Compute/virtualMachines/extensions@2020-
     settings: {
       skipDos2Unix: false
       fileUris: [
-        '${gistUrlPath}/install-sftp-server.sh'
+        '${_gistUrlPath}/install-sftp-server.sh'
       ]
     }
     protectedSettings: {
-      commandToExecute: ' sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.log && sh install-sftp-server.sh "${resourceGroupName}" "${fullStorageAccountName}" "${storageAccountFileShareName}" "${serviceAccountId}" "${serviceAccountPassword}" "${serviceAccountTenant}" "${gistUrlPath}" "${azureCloudEnv}" 2>&1 | sudo tee /vmsetup/install.log && sudo chmod 600 /vmsetup/install.log'
+      commandToExecute: ' sudo mkdir -p /vmsetup && sudo touch /vmsetup/install.log && sh install-sftp-server.sh "${_storageAccountResourceGroupName}" "${_storageAccountName}" "${_storageAccountFileShareName}" "${_serviceAccountId}" "${_serviceAccountPassword}" "${_serviceAccountTenant}" "${_gistUrlPath}" "${_azureCloudEnv}" 2>&1 | sudo tee /vmsetup/install.log && sudo chmod 600 /vmsetup/install.log'
     }
   }
 }
