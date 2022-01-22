@@ -206,7 +206,7 @@ param newOrExisting string = 'new'
 
 var _resourcePrefix = ((newOrExisting ==  'new') ? resourcePrefix : ((newOrExisting ==  'existing') ? resourcePrefix : resourcePrefix))
 /*
-*    _storageAccountName when newOrExisting ==  'new' combine prefix with the storage
+*    _storageAccountName when newOrExisting ==  'new' combine prefix with the storage.
 */
 var _storageAccountName = ((newOrExisting ==  'new') ? replace('${resourcePrefix}${storageAccountName}', '-', '') : ((newOrExisting ==  'existing') ? storageAccountName : storageAccountName))
 var _storageAccountFileShareName = ((newOrExisting ==  'new') ? storageAccountFileShareName : ((newOrExisting ==  'existing') ? storageAccountFileShareName : storageAccountFileShareName))
