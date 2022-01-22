@@ -250,29 +250,28 @@ var _networkSecurityGroupName = '${_resourcePrefix}-nsg'
 //   scope: resourceGroup(_storageAccountResourceGroupName)
 // }
 
-var _fileShareAccessTier = 'Cool'
+// var _fileShareAccessTier = 'Cool'
+// resource storageAccountResource 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+//   name: _storageAccountName
+//   location: _location
+//   sku: {
+//     name: 'Standard_LRS'
+//   }
+//   kind: 'StorageV2'
+//   properties: {
+//     accessTier: _fileShareAccessTier
+//   }
+// }
 
-resource storageAccountResource 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: _storageAccountName
-  location: _location
-  sku: {
-    name: 'Standard_LRS'
-  }
-  kind: 'StorageV2'
-  properties: {
-    accessTier: _fileShareAccessTier
-  }
-}
-
-resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
-  name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
-  properties: {
-    accessTier: _fileShareAccessTier
-  }
-  dependsOn: [
-    storageAccountResource
-  ]
-}
+// resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' = {
+//   name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
+//   properties: {
+//     accessTier: _fileShareAccessTier
+//   }
+//   dependsOn: [
+//     storageAccountResource
+//   ]
+// }
 
 resource publicIPAddressNameResource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
   name: _publicIPAddressName
