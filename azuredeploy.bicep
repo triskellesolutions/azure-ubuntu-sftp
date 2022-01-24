@@ -143,6 +143,7 @@ param storageAccountResouceGroupName string = resourceGroup().name
 param dnsNameForPublicIP string
 
 @allowed([
+  '20_04-lts-gen2'
   '18.04-LTS'
   '16.04.0-LTS'
   '14.04.5-LTS'
@@ -225,13 +226,13 @@ var _gistUrlPath = ((newOrExisting ==  'new') ? gistUrlPath : ((newOrExisting ==
 var _azureCloudEnv = ((newOrExisting ==  'new') ? azureCloudEnv : ((newOrExisting ==  'existing') ? azureCloudEnv : azureCloudEnv))
 
 var _imagePublisher = 'Canonical'
-var _imageOffer = 'UbuntuServer'
+var _imageOffer = (_ubuntuOSVersion == '20_04-lts-gen2') ? '0001-com-ubuntu-server-focal' : 'UbuntuServer'
 var _nicName = '${_resourcePrefix}-vm-nic'
 var _addressPrefix = '10.0.0.0/16'
 var _subnetName = '${_resourcePrefix}-subnet'
 var _subnetPrefix = '10.0.0.0/24'
 var _publicIPAddressName = '${_resourcePrefix}-public-ip'
-var _publicIPAddressType = 'Dynamic'
+var _publicIPAddressType = 'Static'
 var _vmName = '${_resourcePrefix}-ubuntu-vm'
 var _virtualNetworkName = '${_resourcePrefix}-vnet'
 var _subnetRef = resourceId('Microsoft.Network/virtualNetworks/subnets', _virtualNetworkName, _subnetName)
@@ -248,10 +249,10 @@ var _linuxConfiguration = {
 }
 var _networkSecurityGroupName = '${_resourcePrefix}-nsg'
 
-// resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' existing = {
-//   name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
-//   scope: resourceGroup(_storageAccountResourceGroupName)
-// }
+resource storageAccountContainerShareResource 'Microsoft.Storage/storageAccounts/fileServices/shares@2019-06-01' existing = {
+  name: '${_storageAccountName}/default/${_storageAccountFileShareName}'
+  scope: resourceGroup(_storageAccountResourceGroupName)
+}
 
 // var _fileShareAccessTier = 'Cool'
 // resource storageAccountResource 'Microsoft.Storage/storageAccounts@2021-02-01' = {
@@ -276,9 +277,13 @@ var _networkSecurityGroupName = '${_resourcePrefix}-nsg'
 //   ]
 // }
 
-resource publicIPAddressNameResource 'Microsoft.Network/publicIPAddresses@2020-05-01' = {
+resource publicIPAddressNameResource 'Microsoft.Network/publicIPAddresses@2021-05-01' = {
   name: _publicIPAddressName
   location: _location
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
+  }
   properties: {
     publicIPAllocationMethod: _publicIPAddressType
     dnsSettings: {
@@ -287,7 +292,7 @@ resource publicIPAddressNameResource 'Microsoft.Network/publicIPAddresses@2020-0
   }
 }
 
-resource networkSecurityGroupNameResource 'Microsoft.Network/networkSecurityGroups@2020-05-01' =  {
+resource networkSecurityGroupNameResource 'Microsoft.Network/networkSecurityGroups@2021-05-01' =  {
   name: _networkSecurityGroupName
   location: _location
   properties: {
@@ -335,7 +340,7 @@ resource networkSecurityGroupNameResource 'Microsoft.Network/networkSecurityGrou
   }
 }
 
-resource virtualNetworkNameResource 'Microsoft.Network/virtualNetworks@2020-05-01' =  {
+resource virtualNetworkNameResource 'Microsoft.Network/virtualNetworks@2021-05-01' =  {
   name: _virtualNetworkName
   location: _location
   properties: {
@@ -358,7 +363,7 @@ resource virtualNetworkNameResource 'Microsoft.Network/virtualNetworks@2020-05-0
   }
 }
 
-resource nicNameResource 'Microsoft.Network/networkInterfaces@2020-05-01' =  {
+resource nicNameResource 'Microsoft.Network/networkInterfaces@2021-05-01' =  {
   name: _nicName
   location: _location
   properties: {
